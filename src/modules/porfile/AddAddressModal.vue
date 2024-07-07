@@ -18,7 +18,7 @@
 
                 <div class="col-12">
                     <label class="form-label text-navy">รายละเอียดที่อยู่</label>
-                    <textarea rows="4" class="form-control rounded-0 text-navy" v-model="detail"
+                    <textarea rows="4" class="form-control rounded-0 text-navy" maxlength="255" v-model="form.detail"
                         placeholder="รายละเอียดที่อยู่"></textarea>
 
                 </div>
@@ -28,10 +28,12 @@
                         จังหวัด
                         <span class="text-danger">*</span>
                     </label>
+                    {{ form.province }}
                     <select class="form-select rounded-0 text-label mt-1" v-model="form.province"
                         @change="handleSeclectProvince(form.province)">
+
                         <option value="">กรุณาเลือกจังหวัด</option>
-                        <option v-for="province in provinceThailand" :key="province.id" :value="province.id">{{
+                        <option v-for="province in provinceThailand" :key="province.id" :value="province.name_th">{{
                             province.name_th }}</option>
                     </select>
                     <span v-if="$v.province.$error" class="text-danger text-sm">กรุณากรอกข้อมูลให้ครบถ้วน</span>
@@ -45,7 +47,7 @@
                     <select class="form-select rounded-0 text-label mt-1" v-model="form.district"
                         @change="handleSeclectDisTrict(form.district)">
                         <option value="">กรุณาเลือกอำเภอ</option>
-                        <option v-for="district in districtList" :key="district.id" :value="district.id">{{
+                        <option v-for="district in districtList" :key="district.id" :value="district.name_th">{{
                             district.name_th }}</option>
                     </select>
                     <span v-if="$v.district.$error" class="text-danger text-sm">กรุณากรอกข้อมูลให้ครบถ้วน</span>
@@ -66,7 +68,7 @@
                 <div class="col-6 post-num">
                     <inputText textFloat="รหัสไปรษณีย์" isRequired placeholder="รหัสไปรษณีย์" type="text"
                         v-model="form.postNum"></inputText>
-                    <span v-if="$v.postNum.$error" class="text-danger text-sm">กรุณากรอกข้อมูลให้ครบถ้วน</span>
+                    <span v-if="$v.postNum.$error" class="text-danger text-sm">กรุณากรอกเลขรหัสไปรษณีย์</span>
                 </div>
             </form>
 
@@ -77,7 +79,7 @@
                 </button>
 
                 <button type="button" class="btn btn-primary  bt-next" @click="handleSubmit()">
-                    เข้าสู่ระบบ
+                    บันทึก
                 </button>
             </div>
         </ModalVue>
@@ -87,7 +89,7 @@
 <script lang="ts" setup>
 import ModalVue from '@/components/ModalVue.vue'
 import inputText from '@/components/Input/InputText.vue'
-import { required } from '@vuelidate/validators'
+import { required, helpers } from '@vuelidate/validators'
 import { onMounted, ref } from 'vue'
 import useVuelidate from '@vuelidate/core'
 import axios from 'axios'
@@ -95,13 +97,14 @@ import axios from 'axios'
 const form = ref({
     name: '',
     lastName: '',
+    detail: '',
     province: '',
     district: '',
     subDistrict: '',
     postNum: '',
 }) as any
 
-const detail = ref('')
+const number = helpers.regex(/^[0-9]{5}$/);
 
 const rules = {
     form: {
@@ -110,7 +113,7 @@ const rules = {
         province: { required },
         district: { required },
         subDistrict: { required },
-        postNum: { required },
+        postNum: { required, number },
     }
 }
 
@@ -118,10 +121,14 @@ const rules = {
 const $v = useVuelidate(rules.form, form.value)
 
 
+const emit = defineEmits<{
+    (e: 'handleSubmit', value: any): void
+}>()
 
 async function handleSubmit() {
     const result = await $v.value.$validate()
     if (result) {
+        emit('handleSubmit', form.value);
         closeModal()
     }
 }
@@ -129,7 +136,7 @@ async function handleSubmit() {
 
 const show = ref(false)
 
-async function showModal() {
+function showModal() {
     show.value = true
 }
 
@@ -140,7 +147,8 @@ function closeModal() {
     form.value.province = ''
     form.value.district = ''
     form.value.subDistrict = ''
-    detail.value = ''
+    form.value.detail = ''
+    form.value.postNum = ''
 
     $v.value.$reset()
 }
@@ -169,13 +177,13 @@ const districtList = ref<any>([])
 
 const subDistrict = ref<any>()
 
-function handleSeclectProvince(id: number) {
-    districtList.value = provinceThailand.value.find(x => x.id === id)?.amphure
+function handleSeclectProvince(name: string) {
+    districtList.value = provinceThailand.value.find(x => x.name_th === name)?.amphure
 
 }
 
-function handleSeclectDisTrict(id: number) {
-    subDistrict.value = districtList.value.find((x:any) => x.id === id)?.tambon
+function handleSeclectDisTrict(name: string) {
+    subDistrict.value = districtList.value.find((x: any) => x.name_th === name)?.tambon
 
 }
 

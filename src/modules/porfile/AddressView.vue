@@ -5,11 +5,12 @@
         </div>
         <div class="pagination-container">
             <PaginationWithTable :totalItems="addressList.length" :itemsPerPage="3" :modelValue="currentPage"
-                :itemList="addressListMap"  />
+                :itemList="addressListMap" @deleteItem="deleteAddress" @openModalEdit="openModal()" />
         </div>
     </NavBar>
 
-    <AddAddressModal ref="addressModal"></AddAddressModal>
+    <AddAddressModal ref="addressModal" @handleSubmit="updateSubmit"></AddAddressModal>
+
 </template>
 
 <script lang="ts" setup>
@@ -17,6 +18,15 @@ import { ref, computed } from 'vue';
 import NavBar from '@/components/NavBar.vue';
 import PaginationWithTable from '@/components/PaginationWithTable.vue';
 import AddAddressModal from './AddAddressModal.vue'
+
+interface Address {
+    id: number;
+    detail: string;
+    province: string;
+    district: string;
+    subDistrict: string;
+    postNum: string;
+}
 
 const addressList = ref([
     { id: 0, detail: 'test1', province: 'ปราจีนบุรี', district: 'ปราจีนบุรี', subDistrict: 'หนองกี่', postNum: '2510' },
@@ -52,8 +62,20 @@ const currentPage = ref(1)
 
 const addressModal = ref<InstanceType<typeof AddAddressModal>>(null!)
 
+const updateSubmit = (form: Address) => {
+    const newId = addressList.value.length ? addressList.value[addressList.value.length - 1].id + 1 : 0;
+    addressList.value.push({ id: newId, ...form });
+}
+
+const deleteAddress = (id: number) => {
+    addressList.value = addressList.value.filter(address => address.id !== id);
+};
+
+
+
 function openModal() {
     addressModal.value.showModal()
+
 }
 </script>
 

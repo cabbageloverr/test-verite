@@ -2,21 +2,17 @@
   <div>
     <ModalVue :show="true" textHeader="ลืมรหัสผ่าน" maxWidth="500px">
       <form class="mt-3">
-        <inputText
-          textFloat="อีเมล"
-          isRequired
-          placeholder="อีเมล"
-          type="text"
-          v-model="form.email"
-        ></inputText>
+        <inputText textFloat="อีเมล" isRequired placeholder="อีเมล" type="text" v-model="form.email"></inputText>
       </form>
 
       <span v-if="$v.email.$error" class="text-danger text-sm">อีเมลไม่ถูกต้อง</span>
 
-      <div class="modalFooter">
-        <button type="button" class="btn btn-primary w-100 bt-next mt-4" @click="handleSubmit()">
-          รีเซ็ตรหัสผ่าน
-        </button>
+      <div class="modalFooter ">
+        <div class="d-flex justify-content-center">
+          <button type="button" class="btn btn-primary  bt-next mt-4 w-50" @click="handleSubmit()">
+            รีเซ็ตรหัสผ่าน
+          </button>
+        </div>
 
         <div class="text-muted text-sm text-center mt-1">
           เป็นสมาชิกแล้ว?
@@ -27,11 +23,11 @@
     </ModalVue>
   </div>
 </template>
-    
-    <script lang="ts" setup>
+
+<script lang="ts" setup>
 import ModalVue from '@/components/ModalVue.vue'
 import inputText from '@/components/Input/InputText.vue'
-import { required, email} from '@vuelidate/validators'
+import { required, email } from '@vuelidate/validators'
 import { ref } from 'vue'
 import useVuelidate from '@vuelidate/core'
 import { useRouter } from 'vue-router'
@@ -53,13 +49,13 @@ const router = useRouter()
 
 async function handleSubmit() {
   const result = await $v.value.$validate()
-  if(result){
+  if (result) {
     router.push('/reset-password')
   }
 }
 </script>
-    
-    <style scoped>
+
+<style scoped>
 .text-navy {
   color: #16274a;
 }
@@ -75,4 +71,3 @@ async function handleSubmit() {
   padding: 14px;
 }
 </style>
-    

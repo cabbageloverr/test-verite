@@ -11,19 +11,37 @@
 
     <div class="d-flex pt-3  row">
       <div class="nav-side   col-12 col-sm-4 ">
-        <div class="hr"></div>
-        <h5 class="menu-text p-3 m-0">เมนู</h5>
-        <div v-for="(menu, index) in menus" :key="index" @click="router.push({ path: menu.path})"
-          class="d-flex align-items-center border-top gap-2 py-3 px-3 text-navy position-relative" :class="{
-            'border-onclick': route.path === menu.path,
-            'border-bottom': index === menus.length - 1
-          }">
-          <font-awesome-icon :icon="`fa-solid ${menu.icon}`" class="icon me-2 h-5" />
-          <h5 class="m-0">{{ menu.name }}</h5>
+        <div class="hr d-none d-sm-block"></div>
+        <div class="d-flex justify-content-between align-items-center menu-text">
+          <h5 class="p-3 m-0">เมนู</h5>
+          <font-awesome-icon icon="fa-solid fa-caret-down" class="icon d-sm-none d-block" @click="showMenu" />
         </div>
-      </div>
 
-      <!-- <div class="border-start ps-3 col"></div> -->
+        <div class="d-sm-none d-block mb-4">
+          <CollapseVue :show="show">
+            <div v-for="(menu, index) in menus" :key="index" @click="router.push({ path: menu.path })"
+              class="d-flex align-items-center border-top gap-2 py-3 px-3 text-navy position-relative" :class="{
+                'border-onclick': route.path === menu.path,
+                'border-bottom': index === menus.length - 1
+              }">
+              <font-awesome-icon :icon="`fa-solid ${menu.icon}`" class="icon me-2 h-5" />
+              <h5 class="m-0">{{ menu.name }}</h5>
+            </div>
+          </CollapseVue>
+        </div>
+
+        <div class="d-none d-sm-block">
+          <div v-for="(menu, index) in menus" :key="index" @click="router.push({ path: menu.path })"
+            class="d-flex align-items-center border-top gap-2 py-3 px-3 text-navy position-relative" :class="{
+              'border-onclick': route.path === menu.path,
+              'border-bottom': index === menus.length - 1
+            }">
+            <font-awesome-icon :icon="`fa-solid ${menu.icon}`" class="icon me-2 h-5" />
+            <h5 class="m-0">{{ menu.name }}</h5>
+          </div>
+        </div>
+
+      </div>
       <div class="border-start col-12 col-sm-8">
         <div class=" p-2">
           <h5 class="text-mini-header w-100 d-flex align-items-center">{{ menus.find(x => x.path === route.path)?.name
@@ -46,14 +64,21 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faAddressBook, faRightFromBracket, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faAddressBook, faRightFromBracket, faUser, faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { faLock } from '@fortawesome/free-solid-svg-icons/faLock';
 import { useRoute, useRouter } from 'vue-router';
+import CollapseVue from './CollapseVue.vue'
 
-library.add(faUser, faLock, faAddressBook, faRightFromBracket);
+library.add(faUser, faLock, faAddressBook, faRightFromBracket, faCaretDown);
 
 const route = useRoute()
 const router = useRouter()
+
+const show = ref(true)
+
+function showMenu() {
+  show.value = !show.value
+}
 
 const menus = ref([{
   name: 'บัญชีของฉัน', path: '/my-profile', icon: 'fa-user'
@@ -65,6 +90,8 @@ const menus = ref([{
 {
   name: 'ออกจากระบบ', path: '/login', icon: 'fa-right-from-bracket'
 }])
+
+
 
 </script>
 

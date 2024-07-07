@@ -84,12 +84,13 @@ const closeModal = () => {
   .text-header {
     font-size: 18px;
   }
+
   .text-header:after {
     margin-top: 2px;
   }
+
   .modal-container {
     width: 90%;
   }
 }
 </style>
-
