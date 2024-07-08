@@ -12,9 +12,9 @@
           <td class="text-navy">{{ item.text }}</td>
           <td>
             <div class="d-flex text-navy gap-2">
-              <a>แก้ไข</a>
+              <a href="#" class="text-reset" @click="openModalEdit(item.id)">แก้ไข</a>
               <div>|</div>
-              <a href="#" class="text-reset" @click="deleteItem(item.id)">ลบ</a>
+              <a href="#" class="text-reset" @click="openModalDelete(item.id)">ลบ</a>
             </div>
           </td>
         </tr>
@@ -46,12 +46,13 @@
         </ul>
       </nav>
     </div>
-
+    <ModalDelete ref="modalDelete" @deleteItem="handleDeleteConfirmed" textDelete="ที่อยู่"></ModalDelete>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, computed, defineProps, defineEmits, watch } from 'vue';
+import ModalDelete from './ModalDelete.vue';
 
 interface Item {
   id: number;
@@ -65,7 +66,7 @@ const props = defineProps<{
   itemList: Item[];
 }>();
 
-const emit = defineEmits(['update:modelValue', 'deleteItem']);
+const emit = defineEmits(['update:modelValue', 'deleteItem', 'editItem']);
 
 const currentPage = ref(props.modelValue);
 const itemsPerPage = ref(props.itemsPerPage ?? 10);
@@ -109,11 +110,30 @@ const goToPage = (page: number | string) => {
   if (page > totalPages.value) page = totalPages.value;
   currentPage.value = page
   emit('update:modelValue', page)
-};
+}
 
-const deleteItem = (id: number) => {
-  emit('deleteItem', id);
-};
+
+
+const openModalEdit = (id: number) => {
+  emit('editItem', id)
+}
+
+const modalDelete = ref<InstanceType<typeof ModalDelete>>(null!)
+
+let itemIdToDelete = ref<number | null>(null)
+
+
+const openModalDelete = (id: number) => {
+  itemIdToDelete.value = id
+  modalDelete.value.showModal()
+}
+
+const handleDeleteConfirmed = () => {
+  if (itemIdToDelete.value !== null) {
+    emit('deleteItem', itemIdToDelete.value)
+    itemIdToDelete.value = null
+  }
+}
 
 watch(() => itemsPerPage.value, () => {
   currentPage.value = 1

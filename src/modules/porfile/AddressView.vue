@@ -1,15 +1,16 @@
 <template>
     <NavBar>
         <div class="button-container d-flex justify-content-end">
-            <button class="btn btn-primary bt-submit py-2 px-4 mt-2" @click="openModal">สร้างที่อยู่ใหม่</button>
+            <button class="btn btn-primary bt-submit py-2 px-4 mt-2" @click="openModal()">สร้างที่อยู่ใหม่</button>
         </div>
         <div class="pagination-container">
             <PaginationWithTable :totalItems="addressList.length" :itemsPerPage="3" :modelValue="currentPage"
-                :itemList="addressListMap" @deleteItem="deleteAddress" @openModalEdit="openModal()" />
+                :itemList="addressListMap" @deleteItem="deleteAddress" @editItem="openModal" />
         </div>
     </NavBar>
 
     <AddAddressModal ref="addressModal" @handleSubmit="updateSubmit"></AddAddressModal>
+
 
 </template>
 
@@ -20,7 +21,6 @@ import PaginationWithTable from '@/components/PaginationWithTable.vue';
 import AddAddressModal from './AddAddressModal.vue'
 
 interface Address {
-    id: number;
     detail: string;
     province: string;
     district: string;
@@ -34,20 +34,7 @@ const addressList = ref([
     { id: 2, detail: 'test3', province: 'ปราจีนบุรี', district: 'ปราจีนบุรี', subDistrict: 'หนองกี่', postNum: '2510' },
     { id: 3, detail: 'test4', province: 'ปราจีนบุรี', district: 'ปราจีนบุรี', subDistrict: 'หนองกี่', postNum: '2510' },
     { id: 4, detail: 'test5', province: 'ปราจีนบุรี', district: 'ปราจีนบุรี', subDistrict: 'หนองกี่', postNum: '2510' },
-    { id: 5, detail: 'test6', province: 'ปราจีนบุรี', district: 'ปราจีนบุรี', subDistrict: 'หนองกี่', postNum: '2510' },
-    { id: 6, detail: 'test7', province: 'ปราจีนบุรี', district: 'ปราจีนบุรี', subDistrict: 'หนองกี่', postNum: '2510' },
-    { id: 7, detail: 'test8', province: 'ปราจีนบุรี', district: 'ปราจีนบุรี', subDistrict: 'หนองกี่', postNum: '2510' },
-    { id: 8, detail: 'test9', province: 'ปราจีนบุรี', district: 'ปราจีนบุรี', subDistrict: 'หนองกี่', postNum: '2510' },
-    { id: 9, detail: 'test10', province: 'ปราจีนบุรี', district: 'ปราจีนบุรี', subDistrict: 'หนองกี่', postNum: '2510' },
-    { id: 10, detail: 'test11', province: 'ปราจีนบุรี', district: 'ปราจีนบุรี', subDistrict: 'หนองกี่', postNum: '2510' },
-    { id: 11, detail: 'test12', province: 'ปราจีนบุรี', district: 'ปราจีนบุรี', subDistrict: 'หนองกี่', postNum: '2510' },
-    { id: 12, detail: 'test13', province: 'ปราจีนบุรี', district: 'ปราจีนบุรี', subDistrict: 'หนองกี่', postNum: '2510' },
-    { id: 13, detail: 'test14', province: 'ปราจีนบุรี', district: 'ปราจีนบุรี', subDistrict: 'หนองกี่', postNum: '2510' },
-    { id: 14, detail: 'test15', province: 'ปราจีนบุรี', district: 'ปราจีนบุรี', subDistrict: 'หนองกี่', postNum: '2510' },
-    { id: 15, detail: 'test16', province: 'ปราจีนบุรี', district: 'ปราจีนบุรี', subDistrict: 'หนองกี่', postNum: '2510' },
-    { id: 16, detail: 'test17', province: 'ปราจีนบุรี', district: 'ปราจีนบุรี', subDistrict: 'หนองกี่', postNum: '2510' },
-    { id: 17, detail: 'test18', province: 'ปราจีนบุรี', district: 'ปราจีนบุรี', subDistrict: 'หนองกี่', postNum: '2510' },
-    { id: 18, detail: 'test19', province: 'ปราจีนบุรี', district: 'ปราจีนบุรี', subDistrict: 'หนองกี่', postNum: '2510' },
+
 ]);
 
 const addressListMap = computed(() =>
@@ -62,21 +49,28 @@ const currentPage = ref(1)
 
 const addressModal = ref<InstanceType<typeof AddAddressModal>>(null!)
 
-const updateSubmit = (form: Address) => {
-    const newId = addressList.value.length ? addressList.value[addressList.value.length - 1].id + 1 : 0;
-    addressList.value.push({ id: newId, ...form });
+const updateSubmit = (id: number | undefined, form: Address) => {
+    if (id !== undefined) {
+        const index = addressList.value.findIndex(a => a.id === id);
+        if (index !== -1) {
+            addressList.value[index] = { id, ...form };
+        }
+        else {
+            const newId = addressList.value.length ? addressList.value[addressList.value.length - 1].id + 1 : 0
+            addressList.value.push({ id: newId, ...form })
+        }
+    }
 }
 
 const deleteAddress = (id: number) => {
     addressList.value = addressList.value.filter(address => address.id !== id);
-};
-
-
-
-function openModal() {
-    addressModal.value.showModal()
-
 }
+
+
+const openModal = (id?: number) => {
+    addressModal.value.showModal(id)
+}
+
 </script>
 
 <style scoped>

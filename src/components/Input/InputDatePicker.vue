@@ -135,7 +135,6 @@ const emit = defineEmits<{
 watch(date.value, () => {
   if (date.value.day.value > 0 && date.value.month.value > 0 && date.value.year.value > 0) {
     formatDate()
-    // console.log(dateFormat.value);
     emit('handleSelect', dateFormat.value);
   }
 

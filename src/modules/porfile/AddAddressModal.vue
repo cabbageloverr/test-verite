@@ -28,7 +28,7 @@
                         จังหวัด
                         <span class="text-danger">*</span>
                     </label>
-                    {{ form.province }}
+
                     <select class="form-select rounded-0 text-label mt-1" v-model="form.province"
                         @change="handleSeclectProvince(form.province)">
 
@@ -60,7 +60,8 @@
                     </label>
                     <select class="form-select rounded-0 text-label mt-1" v-model="form.subDistrict">
                         <option value="">กรุณาเลือกตำบล</option>
-                        <option v-for="subD in subDistrict" :key="subD.id" :value="subD.id">{{ subD.name_th }}</option>
+                        <option v-for="subD in subDistrict" :key="subD.id" :value="subD.name_th">{{ subD.name_th }}
+                        </option>
                     </select>
                     <span v-if="$v.subDistrict.$error" class="text-danger text-sm">กรุณากรอกข้อมูลให้ครบถ้วน</span>
                 </div>
@@ -94,7 +95,18 @@ import { onMounted, ref } from 'vue'
 import useVuelidate from '@vuelidate/core'
 import axios from 'axios'
 
-const form = ref({
+
+interface Address {
+    name: string;
+    lastName: string;
+    detail: string;
+    province: string;
+    district: string;
+    subDistrict: string;
+    postNum: string;
+}
+
+const form = ref<Address>({
     name: '',
     lastName: '',
     detail: '',
@@ -102,7 +114,7 @@ const form = ref({
     district: '',
     subDistrict: '',
     postNum: '',
-}) as any
+})
 
 const number = helpers.regex(/^[0-9]{5}$/);
 
@@ -122,13 +134,22 @@ const $v = useVuelidate(rules.form, form.value)
 
 
 const emit = defineEmits<{
-    (e: 'handleSubmit', value: any): void
+    (e: 'handleSubmit', id?: number, value?: any): void
 }>()
+
+
+const idAddress = ref()
 
 async function handleSubmit() {
     const result = await $v.value.$validate()
     if (result) {
-        emit('handleSubmit', form.value);
+        if (idAddress.value !== undefined) {
+            emit('handleSubmit', idAddress.value, form.value)
+
+        }
+        else {
+            emit('handleSubmit', undefined, form.value);
+        }
         closeModal()
     }
 }
@@ -136,21 +157,33 @@ async function handleSubmit() {
 
 const show = ref(false)
 
-function showModal() {
+function showModal(id?: number) {
+    if (id !== undefined) {
+        idAddress.value = id
+    }
+    else {
+        idAddress.value = ''
+    }
     show.value = true
+
 }
 
 function closeModal() {
     show.value = false
-    form.value.name = ''
-    form.value.lastName = ''
-    form.value.province = ''
-    form.value.district = ''
-    form.value.subDistrict = ''
-    form.value.detail = ''
-    form.value.postNum = ''
+    resetForm()
+}
 
-    $v.value.$reset()
+function resetForm() {
+    form.value = {
+        name: '',
+        lastName: '',
+        detail: '',
+        province: '',
+        district: '',
+        subDistrict: '',
+        postNum: '',
+    };
+    $v.value.$reset();
 }
 
 
