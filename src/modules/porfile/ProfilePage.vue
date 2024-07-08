@@ -2,21 +2,21 @@
     <NavBar>
         <form class="row g-4">
             <div class="col-12 col-md-6">
-                <InputText v-model="form.name" class="" textFloat="ชื่อ" isRequired placeholder="ชื่อ"
-                    type="text"></InputText>
-                    <span v-if="$v.name.$error" class="text-danger text-sm">กรุณากรอกข้อมูลให้ครบถ้วน</span>
+                <InputText v-model="form.name" class="" textFloat="ชื่อ" isRequired placeholder="ชื่อ" type="text">
+                </InputText>
+                <span v-if="$v.name.$error" class="text-danger text-sm">กรุณากรอกข้อมูลให้ครบถ้วน</span>
             </div>
 
             <div class="col-12 col-md-6">
-                <InputText v-model="form.lastName" class="" textFloat="นามสกุล" isRequired
-                    placeholder="นามสกุล" type="text">
+                <InputText v-model="form.lastName" class="" textFloat="นามสกุล" isRequired placeholder="นามสกุล"
+                    type="text">
                 </InputText>
                 <span v-if="$v.lastName.$error" class="text-danger text-sm">กรุณากรอกข้อมูลให้ครบถ้วน</span>
             </div>
 
             <div class="col-12 col-md-6">
-                <InputText v-model="form.email" class="" textFloat="อีเมล" isRequired placeholder="อีเมล"
-                    type="text"></InputText>
+                <InputText v-model="form.email" class="" textFloat="อีเมล" isRequired placeholder="อีเมล" type="text">
+                </InputText>
                 <span v-if="$v.email.$error" class="text-danger text-sm">กรุณากรอกอีเมล (เช่น email@example.com)</span>
             </div>
 
@@ -24,13 +24,15 @@
                 <InputText v-model="form.phoneNum" class="" textFloat="เบอร์โทรศัพท์" isRequired
                     placeholder="เบอร์โทรศัพท์" type="text">
                 </InputText>
-                <span v-if="$v.phoneNum.$error" class="text-danger text-sm">กรุณากรอกตัวเลขเบอร์มือถือจำนวน 10 ตัว</span>
+                <span v-if="$v.phoneNum.$error" class="text-danger text-sm">กรุณากรอกตัวเลขเบอร์มือถือจำนวน 10
+                    ตัว</span>
             </div>
 
             <div class="col-12 col-md-6">
-                <InputDatePicker class="" isRequired textFloat="วันเกิด" type="text"
-                    :modelValue="form.birthday" @handleSelect="handleDatePickerSelect"> </InputDatePicker>
-                    <span v-if="$v.birthday.$error" class="text-danger text-sm">กรุณาตรวจสอบความถูกต้องและลองใหม่อีกครั้ง</span>
+                <InputDatePicker class="" isRequired textFloat="วันเกิด" type="text" :modelValue="form.birthday"
+                    @handleSelect="handleDatePickerSelect"> </InputDatePicker>
+                <span v-if="$v.birthday.$error"
+                    class="text-danger text-sm">กรุณาตรวจสอบความถูกต้องและลองใหม่อีกครั้ง</span>
             </div>
 
             <div class="radio-gender text-navy col-12 col-md-6">
@@ -53,7 +55,7 @@
                 บันทึก
             </button>
         </div>
-        
+
 
 
     </NavBar>
@@ -88,14 +90,14 @@ const handleDatePickerSelect = (selectedDate: string) => {
     form.value.birthday = selectedDate;
 }
 
-const number = helpers.regex( /^[0-9]{10}$/);
+const number = helpers.regex(/^[0-9]{10}$/);
 
 
 const rules = {
     name: { required },
     lastName: { required },
     email: { required, email },
-    phoneNum: {required, number},
+    phoneNum: { required, number },
     birthday: { required },
     gender: { required },
 }
@@ -141,6 +143,6 @@ async function handleSubmit() {
 }
 
 .text-sm {
-  font-size: 14px;
+    font-size: 14px;
 }
 </style>

@@ -15,9 +15,9 @@
           placeholder="ยืนยันรหัสผ่าน" type="password">
         </inputText>
         <span v-if="$v.confirmPassword.$error" class="text-danger text-sm">รหัสผ่านไม่ตรงกัน</span>
-  
-        <inputDatePicker class="mt-3" textFloat="วันเกิด" type="text" :modelValue="form.birthday" 
-        @handleSelect="handleDatePickerSelect"> </inputDatePicker>
+
+        <inputDatePicker class="mt-3" textFloat="วันเกิด" type="text" :modelValue="form.birthday"
+          @handleSelect="handleDatePickerSelect"> </inputDatePicker>
         <span v-if="$v.birthday.$error" class="text-danger text-sm">กรุณาตรวจสอบความถูกต้องและลองใหม่อีกครั้ง</span>
 
         <div class="form-group radio-gender mt-3 d-flex gap-2 text-navy">
@@ -109,7 +109,7 @@ const router = useRouter()
 
 async function handleSubmit() {
   const result = await $v.value.$validate()
-  if(result){
+  if (result) {
     router.push('/login')
   }
 }

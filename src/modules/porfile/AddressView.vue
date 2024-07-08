@@ -1,7 +1,7 @@
 <template>
     <NavBar>
         <div class="button-container d-flex justify-content-end">
-            <button class="btn btn-primary bt-submit py-2 px-4 mt-2" @click="openModal()">สร้างที่อยู่ใหม่</button>
+            <button class="btn btn-primary bt-submit py-2 px-4 mt-2" @click="openModal(0)">สร้างที่อยู่ใหม่</button>
         </div>
         <div class="pagination-container">
             <PaginationWithTable :totalItems="addressList.length" :itemsPerPage="3" :modelValue="currentPage"
@@ -21,21 +21,16 @@ import PaginationWithTable from '@/components/PaginationWithTable.vue';
 import AddAddressModal from './AddAddressModal.vue'
 
 interface Address {
-    detail: string;
-    province: string;
-    district: string;
-    subDistrict: string;
-    postNum: string;
+    name: string
+    lastName: string
+    detail: string
+    province: string
+    district: string
+    subDistrict: string
+    postNum: string
 }
 
-const addressList = ref([
-    { id: 0, detail: 'test1', province: 'ปราจีนบุรี', district: 'ปราจีนบุรี', subDistrict: 'หนองกี่', postNum: '2510' },
-    { id: 1, detail: 'test2', province: 'ปราจีนบุรี', district: 'ปราจีนบุรี', subDistrict: 'หนองกี่', postNum: '2510' },
-    { id: 2, detail: 'test3', province: 'ปราจีนบุรี', district: 'ปราจีนบุรี', subDistrict: 'หนองกี่', postNum: '2510' },
-    { id: 3, detail: 'test4', province: 'ปราจีนบุรี', district: 'ปราจีนบุรี', subDistrict: 'หนองกี่', postNum: '2510' },
-    { id: 4, detail: 'test5', province: 'ปราจีนบุรี', district: 'ปราจีนบุรี', subDistrict: 'หนองกี่', postNum: '2510' },
-
-]);
+const addressList = ref<any[]>([]);
 
 const addressListMap = computed(() =>
     addressList.value.map(x => ({
@@ -49,14 +44,14 @@ const currentPage = ref(1)
 
 const addressModal = ref<InstanceType<typeof AddAddressModal>>(null!)
 
-const updateSubmit = (id: number | undefined, form: Address) => {
+const updateSubmit = (id: number, form: Address) => {
     if (id !== undefined) {
         const index = addressList.value.findIndex(a => a.id === id);
         if (index !== -1) {
             addressList.value[index] = { id, ...form };
         }
         else {
-            const newId = addressList.value.length ? addressList.value[addressList.value.length - 1].id + 1 : 0
+            const newId = addressList.value.length ? addressList.value[addressList.value.length - 1].id + 1 : 1
             addressList.value.push({ id: newId, ...form })
         }
     }
@@ -67,8 +62,16 @@ const deleteAddress = (id: number) => {
 }
 
 
-const openModal = (id?: number) => {
-    addressModal.value.showModal(id)
+const openModal = (id: number) => {
+    let editItem = addressList.value.find(x => x.id === id)
+    if (editItem) {
+        addressModal.value.showModal(id, editItem)
+    }
+
+    else {
+        addressModal.value.showModal(id)
+    }
+
 }
 
 </script>

@@ -44,6 +44,7 @@
                         อำเภอ
                         <span class="text-danger">*</span>
                     </label>
+
                     <select class="form-select rounded-0 text-label mt-1" v-model="form.district"
                         @change="handleSeclectDisTrict(form.district)">
                         <option value="">กรุณาเลือกอำเภอ</option>
@@ -58,7 +59,8 @@
                         แขวง/ตำบล
                         <span class="text-danger">*</span>
                     </label>
-                    <select class="form-select rounded-0 text-label mt-1" v-model="form.subDistrict">
+                    <select class="form-select rounded-0 text-label mt-1" v-model="form.subDistrict"
+                        @change="handleSeclectSubDistrict(form.subDistrict)">
                         <option value="">กรุณาเลือกตำบล</option>
                         <option v-for="subD in subDistrict" :key="subD.id" :value="subD.name_th">{{ subD.name_th }}
                         </option>
@@ -91,22 +93,22 @@
 import ModalVue from '@/components/ModalVue.vue'
 import inputText from '@/components/Input/InputText.vue'
 import { required, helpers } from '@vuelidate/validators'
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import useVuelidate from '@vuelidate/core'
 import axios from 'axios'
 
 
 interface Address {
-    name: string;
-    lastName: string;
-    detail: string;
-    province: string;
-    district: string;
-    subDistrict: string;
-    postNum: string;
+    name: string
+    lastName: string
+    detail: string
+    province: string
+    district: string
+    subDistrict: string
+    postNum: string
 }
 
-const form = ref<Address>({
+const form = reactive<Address>({
     name: '',
     lastName: '',
     detail: '',
@@ -130,26 +132,21 @@ const rules = {
 }
 
 
-const $v = useVuelidate(rules.form, form.value)
+const $v = useVuelidate(rules.form, form)
 
 
 const emit = defineEmits<{
-    (e: 'handleSubmit', id?: number, value?: any): void
+    (e: 'handleSubmit', id: number, value: any): void
 }>()
 
 
-const idAddress = ref()
+const idAddress = ref(0)
 
 async function handleSubmit() {
     const result = await $v.value.$validate()
-    if (result) {
-        if (idAddress.value !== undefined) {
-            emit('handleSubmit', idAddress.value, form.value)
 
-        }
-        else {
-            emit('handleSubmit', undefined, form.value);
-        }
+    if (result) {
+        emit('handleSubmit', idAddress.value, form)
         closeModal()
     }
 }
@@ -157,15 +154,22 @@ async function handleSubmit() {
 
 const show = ref(false)
 
-function showModal(id?: number) {
-    if (id !== undefined) {
-        idAddress.value = id
-    }
-    else {
-        idAddress.value = ''
-    }
-    show.value = true
+function showModal(id: number, oldForm?: Address) {
+    idAddress.value = id
+    if (oldForm) {
+        form.name = oldForm.name,
+            form.lastName = oldForm.lastName,
+            form.detail = oldForm.detail,
+            form.province = oldForm.province,
+            form.district = oldForm.district,
+            form.subDistrict = oldForm.subDistrict,
+            form.postNum = oldForm.postNum,
+            districtList.value = provinceThailand.value.find((x: any) => x.name_th === oldForm.province)?.amphure
+        subDistrict.value = districtList.value.find((x: any) => x.name_th === form.district)?.tambon
 
+
+    }
+    show.value = true;
 }
 
 function closeModal() {
@@ -174,16 +178,15 @@ function closeModal() {
 }
 
 function resetForm() {
-    form.value = {
-        name: '',
-        lastName: '',
-        detail: '',
-        province: '',
-        district: '',
-        subDistrict: '',
-        postNum: '',
-    };
-    $v.value.$reset();
+    form.name = '',
+        form.lastName = '',
+        form.detail = '',
+        form.province = '',
+        form.district = '',
+        form.subDistrict = '',
+        form.postNum = '',
+        $v.value.$reset();
+
 }
 
 
@@ -212,15 +215,22 @@ const subDistrict = ref<any>()
 
 function handleSeclectProvince(name: string) {
     districtList.value = provinceThailand.value.find(x => x.name_th === name)?.amphure
+    form.district = ''
+    form.subDistrict = ''
+    form.postNum = ''
 
 }
 
 function handleSeclectDisTrict(name: string) {
     subDistrict.value = districtList.value.find((x: any) => x.name_th === name)?.tambon
-
+    form.subDistrict = ''
+    form.postNum = ''
 }
 
+function handleSeclectSubDistrict(name: string) {
+    form.postNum = subDistrict.value.find((x: any) => x.name_th === name)?.zip_code
 
+}
 
 
 onMounted(() => {

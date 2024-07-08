@@ -120,7 +120,7 @@ const openModalEdit = (id: number) => {
 
 const modalDelete = ref<InstanceType<typeof ModalDelete>>(null!)
 
-let itemIdToDelete = ref<number | null>(null)
+let itemIdToDelete = ref<number>(0)
 
 
 const openModalDelete = (id: number) => {
@@ -131,7 +131,7 @@ const openModalDelete = (id: number) => {
 const handleDeleteConfirmed = () => {
   if (itemIdToDelete.value !== null) {
     emit('deleteItem', itemIdToDelete.value)
-    itemIdToDelete.value = null
+    itemIdToDelete.value = 0
   }
 }
 
