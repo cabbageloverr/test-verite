@@ -9,16 +9,18 @@
       <h2 class="text-header w-100 d-flex align-items-center">บัญชื่อผู้ใช้</h2>
     </div>
 
-    <div class="d-flex pt-3  row">
-      <div class="nav-side   col-12 col-sm-4 ">
+    <div class="d-flex pt-3 row">
+      <div class="nav-side col-12 col-sm-4">
         <div class="hr d-none d-sm-block"></div>
         <div class="d-flex justify-content-between align-items-center menu-text">
           <h5 class="p-3 m-0">เมนู</h5>
-          <font-awesome-icon icon="fa-solid fa-caret-down" class="icon d-sm-none d-block" @click="showMenu" />
+          <font-awesome-icon :icon="show ? 'fa-solid fa-caret-up' : 'fa-solid fa-caret-down'"
+            class="icon d-sm-none d-block" data-bs-toggle="collapse" data-bs-target="#menuCollapse"
+            aria-expanded="false" aria-controls="menuCollapse" @click="showMenu" />
         </div>
 
-        <div class="d-sm-none d-block mb-4">
-          <CollapseVue :show="show">
+        <div class=" d-sm-none d-block mb-4">
+          <div id="menuCollapse" class="collapse show">
             <div v-for="(menu, index) in menus" :key="index" @click="router.push({ path: menu.path })"
               class="d-flex align-items-center border-top gap-2 py-3 px-3 text-navy position-relative" :class="{
                 'border-onclick': route.path === menu.path,
@@ -27,7 +29,7 @@
               <font-awesome-icon :icon="`fa-solid ${menu.icon}`" class="icon me-2 h-5" />
               <h5 class="m-0">{{ menu.name }}</h5>
             </div>
-          </CollapseVue>
+          </div>
         </div>
 
         <div class="d-none d-sm-block">
@@ -40,36 +42,30 @@
             <h5 class="m-0">{{ menu.name }}</h5>
           </div>
         </div>
-
       </div>
+
       <div class="border-start col-12 col-sm-8">
-        <div class=" p-2">
+        <div class="p-2">
           <h5 class="text-mini-header w-100 d-flex align-items-center">{{ menus.find(x => x.path === route.path)?.name
             }}</h5>
-
           <div class="pt-2">
-
             <slot></slot>
           </div>
         </div>
-
       </div>
     </div>
-
-
   </div>
-
 </template>
+
 
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faAddressBook, faRightFromBracket, faUser, faCaretDown } from '@fortawesome/free-solid-svg-icons';
+import { faAddressBook, faRightFromBracket, faUser, faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
 import { faLock } from '@fortawesome/free-solid-svg-icons/faLock';
 import { useRoute, useRouter } from 'vue-router';
-import CollapseVue from './CollapseVue.vue'
 
-library.add(faUser, faLock, faAddressBook, faRightFromBracket, faCaretDown);
+library.add(faUser, faLock, faAddressBook, faRightFromBracket, faCaretDown, faCaretUp);
 
 const route = useRoute()
 const router = useRouter()
